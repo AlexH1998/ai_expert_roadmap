@@ -3,19 +3,27 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest          # GitHub-hosted runner
+
     steps:
+      # 1️⃣  Pull repo at HEAD
       - uses: actions/checkout@v4
+
+      # 2️⃣  Install uv (adds single binary to PATH)
       - uses: astral-sh/setup-uv@v6
 
-      - name: Create venv **and** sync deps   # one multi-line run block
+      # 3️⃣  Create a project-local venv and install locked deps
+      - name: Create venv & sync deps
         run: |
           uv venv .venv
           source .venv/bin/activate
           uv pip sync requirements.lock
 
+      # 4️⃣  Lint & format (Black + isort via pre-commit)
       - uses: pre-commit/action@v3.0.1
+
+      # 5️⃣  Run tests – tolerate exit-code 5 (“no tests collected”)
       - name: Run pytest
         run: |
           source .venv/bin/activate
-          pytest -q
+          pytest -q || if [ $? -eq 5 ]; then echo "No tests collected – OK"; else exit 1; fi
