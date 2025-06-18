@@ -1,21 +1,21 @@
 name: CI
-
 on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ubuntu-latest         # GitHub-hosted runner :contentReference[oaicite:2]{index=2}
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4  # Fetch repo @ HEAD
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
 
-      # One-liner to install the fast uv binary
-      - uses: astral-sh/setup-uv@v6   # :contentReference[oaicite:3]{index=3}
+      - name: Create venv **and** sync deps   # one multi-line run block
+        run: |
+          uv venv .venv
+          source .venv/bin/activate
+          uv pip sync requirements.lock
 
-      # Recreate the exact Python env from your lockfile
-      - name: Sync deps
-        run: uv pip sync requirements.lock   # :contentReference[oaicite:4]{index=4}
-
-      # Lint + format (pre-commit) and run tests
-      - uses: pre-commit/action@v3.0.1       # :contentReference[oaicite:5]{index=5}
+      - uses: pre-commit/action@v3.0.1
       - name: Run pytest
-        run: pytest -q
+        run: |
+          source .venv/bin/activate
+          pytest -q
