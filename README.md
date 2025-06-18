@@ -1,1 +1,1 @@
-![CI](https://github.com/<YOUR_USER>/ml-roadmap-sandbox/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/AlexH1998/ml-roadmap-sandbox/actions/workflows/ci.yml/badge.svg)
